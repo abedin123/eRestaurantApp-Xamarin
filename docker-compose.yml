@@ -1,0 +1,36 @@
+version: '3'
+
+services:
+  smartrestaurant-sql:
+    image: mcr.microsoft.com/mssql/server:2017-latest-ubuntu
+    restart: unless-stopped
+    environment:
+      - ACCEPT_EULA=Y
+      - SA_PASSWORD=QWElkj132!
+      - MSSQL_PID=Developer
+    ports:
+      - 1401:1433
+    networks:
+      - smartrestaurant
+
+    
+  smartrestaurant-api:
+    image: smartrestaurant/api
+    restart: unless-stopped
+    build: .
+    environment:
+      - ConnectionStrings:eRestarurant=Server=smartrestaurant-sql,1433;Database=170058;User=sa;Password=QWElkj132!;ConnectRetryCount=0
+    ports:
+      -  34080:80
+    networks:
+      - smartrestaurant
+    links:
+      - smartrestaurant-sql
+    depends_on:
+      - smartrestaurant-sql
+      
+networks:
+  smartrestaurant:
+    driver: bridge
+
+        
